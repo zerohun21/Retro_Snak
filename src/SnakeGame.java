@@ -20,7 +20,7 @@ public class SnakeGame extends JFrame {
         this.pack();
         this.setVisible(true);
         this.setLocationRelativeTo(null);
-        playBackgroundMusic("C:/spp/sound/sbg.wav");
+        playBackgroundMusic("resources/sounds/sbg.wav");
     }
 
     private void playBackgroundMusic(String filePath) {
@@ -192,7 +192,7 @@ class GamePanel extends JPanel implements ActionListener {
                 DELAY -= 5;
                 timer.setDelay(DELAY);
             }
-            playSoundEffect("C:/spp/sound/sitem.wav");
+            playSoundEffect("resources/sounds/sitem.wav");
         }
     }
 
