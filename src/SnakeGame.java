@@ -45,6 +45,8 @@ public class SnakeGame extends JFrame {
 
 class GamePanel extends JPanel implements ActionListener {
 
+    public int money = 0;
+
     static final int SCREEN_WIDTH = 800;
     static final int SCREEN_HEIGHT = 800;
     static final int UNIT_SIZE = 25;
@@ -187,6 +189,7 @@ class GamePanel extends JPanel implements ActionListener {
         if ((x[0] == appleX) && (y[0] == appleY)) {
             bodyParts++;
             applesEaten++;
+            money += 50;
             newApple();
             if (DELAY > 10) {
                 DELAY -= 5;
