@@ -41,9 +41,15 @@ public class SnakeGame extends JFrame {
     public static void main(String[] args) {
         new SnakeGame();
     }
+
 }
 
 class GamePanel extends JPanel implements ActionListener {
+
+    JButton restartButton;
+    JButton exitButton;
+    JLabel scoreLabel;
+
 
     public int money = 0;
 
@@ -70,14 +76,71 @@ class GamePanel extends JPanel implements ActionListener {
         this.setBackground(Color.black);
         this.setFocusable(true);
         this.addKeyListener(new MyKeyAdapter());
+        initializeGameOverComponents();
         startGame();
+    }
+
+    private void initializeGameOverComponents() {
+        // Initialize the components
+        restartButton = new JButton("Restart");
+        exitButton = new JButton("Exit");
+        scoreLabel = new JLabel();
+
+        // Set the layout to null so we can set absolute positions
+        setLayout(null);
+
+        // Position the score label
+        scoreLabel.setBounds(350, 300, 200, 50);
+        scoreLabel.setForeground(Color.WHITE);
+        scoreLabel.setFont(new Font("Ink Free", Font.BOLD, 20));
+        add(scoreLabel);
+
+        // Position the restart button
+        restartButton.setBounds(250, 500, 100, 50);
+        add(restartButton);
+        restartButton.addActionListener(e -> restartGame());
+
+        // Position the exit button
+        exitButton.setBounds(450, 500, 100, 50);
+        add(exitButton);
+        exitButton.addActionListener(e -> System.exit(0));
+
+        // Initially, these components should not be visible
+        restartButton.setVisible(false);
+        exitButton.setVisible(false);
+        scoreLabel.setVisible(false);
+    }
+
+    private void restartGame() {
+        // 게임 재시작 로직
+        bodyParts = 6;
+        applesEaten = 0;
+        direction = 'R';
+        DELAY = 100;
+        scoreLabel.setVisible(false);
+        restartButton.setVisible(false);
+        exitButton.setVisible(false);
+        startGame();
+    }
+
+    public void gameOver(Graphics g) {
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Ink Free", Font.BOLD, 50));
+        FontMetrics metrics1 = getFontMetrics(g.getFont());
+        g.drawString("Game Over", (SCREEN_WIDTH - metrics1.stringWidth("Game Over")) / 2, SCREEN_HEIGHT / 2);
+        int finalScore = applesEaten * 50;
+        scoreLabel.setText("Score: " + finalScore);
+        scoreLabel.setVisible(true);
+        restartButton.setVisible(true);
+        exitButton.setVisible(true);
     }
     private void playSoundEffect(String filePath) {
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(filePath).getAbsoluteFile());
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);
-            clip.start(); // 단회 재생
+            clip.start();
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
@@ -92,7 +155,7 @@ class GamePanel extends JPanel implements ActionListener {
         running = true;
         timer = new Timer(DELAY, this);
         timer.start();
-        animal = 2;
+        animal = 2; // 동물색
     }
 
     public void paintComponent(Graphics g) {
@@ -109,7 +172,7 @@ class GamePanel extends JPanel implements ActionListener {
                 if (i == 0) {
                     switch (animal) {
                         case 0:
-                            g.setColor(Color.darkGray); // 검정색 대체
+                            g.setColor(Color.darkGray);
                             break;
                         case 1:
                             g.setColor(Color.white);
@@ -153,7 +216,8 @@ class GamePanel extends JPanel implements ActionListener {
             g.fillRect(SCREEN_WIDTH - UNIT_SIZE, 0, UNIT_SIZE, SCREEN_HEIGHT);
             g.fillRect(0, SCREEN_HEIGHT - UNIT_SIZE, SCREEN_WIDTH, UNIT_SIZE);
 
-        } else {
+        }
+        else{
             gameOver(g);
         }
     }
@@ -215,13 +279,7 @@ class GamePanel extends JPanel implements ActionListener {
         }
     }
 
-    public void gameOver(Graphics g) {
-        // Game Over text and score display
-        g.setFont(new Font("Ink Free", Font.BOLD, 40));
-        FontMetrics metrics2 = getFontMetrics(g.getFont());
-        int finalScore = applesEaten * 100;
-        g.drawString("Coin: " + finalScore, (SCREEN_WIDTH - metrics2.stringWidth("Coin: " + finalScore)) / 2, g.getFont().getSize() + SCREEN_HEIGHT / 2);
-    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -230,6 +288,7 @@ class GamePanel extends JPanel implements ActionListener {
             checkApple();
             checkCollisions();
         }
+
         repaint();
     }
 
